@@ -6,11 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.10] - 2026-08-03
 
-${GITHUB_EVENT_RELEASE_BODY}
+- Migrate LSP support to the `LspIntegrationProvider` API ([#113](https://github.com/tox-dev/jetbrains-fish/pull/113)).
+- Stop mocking the global `ApplicationManager` in LSP tests
+  ([#111](https://github.com/tox-dev/jetbrains-fish/pull/111)).
 
 ## [0.1.9] - 2026-07-29
 
-${GITHUB_EVENT_RELEASE_BODY}
+- Build against IntelliJ Platform 2026.2 ([#108](https://github.com/tox-dev/jetbrains-fish/pull/108)).
+- Refresh release automation, workflow security checks, and formatting tools.
 
 ## [0.1.8] - 2026-02-21
 
@@ -42,6 +45,16 @@ ${GITHUB_EVENT_RELEASE_BODY}
 - Fix CI bugs, improve workflows, and fix flaky UI tests by @gaborbernat in
   https://github.com/tox-dev/jetbrains-fish/pull/14
 
+## [0.1.3] - 2026-01-29
+
+- Include the commit hash in development builds and simplify the release workflow
+  ([#13](https://github.com/tox-dev/jetbrains-fish/pull/13)).
+
+## [0.1.2] - 2026-01-29
+
+- Fix LSP4IJ compatibility and improve run configuration support
+  ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)).
+
 ## [0.1.1] - 2026-01-29
 
 ### Added
@@ -71,6 +84,8 @@ ${GITHUB_EVENT_RELEASE_BODY}
 [0.1.0]: https://github.com/tox-dev/jetbrains-fish/commits/v0.1.0
 [0.1.1]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.0...v0.1.1
 [0.1.10]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.9...v0.1.10
+[0.1.2]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.1...v0.1.2
+[0.1.3]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.2...v0.1.3
 [0.1.4]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.1...v0.1.4
 [0.1.5]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.4...v0.1.5
 [0.1.6]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.5...v0.1.6

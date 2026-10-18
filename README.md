@@ -6,6 +6,8 @@
 
 This plugin provides comprehensive language support for [Fish shell](https://fishshell.com/) scripts in JetBrains IDEs.
 
+See the [changelog](CHANGELOG.md) for released changes.
+
 [![Install Plugin](https://img.shields.io/badge/Install-JetBrains%20Marketplace-000?style=for-the-badge&logo=jetbrains)](https://plugins.jetbrains.com/plugin/29973-fish-shell)
 
 ## Features
