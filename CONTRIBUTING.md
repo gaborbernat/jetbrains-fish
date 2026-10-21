@@ -26,8 +26,9 @@ major version, a `feature` fragment selects a minor version, and other categorie
 updates `CHANGELOG.md`; `prek` checks the result before the repository-scoped App pushes the release commit and
 `v`-prefixed tag. The dispatch does not ask for a version number.
 
-The tag workflow checks the notes, sets `pluginVersion` for that build, then builds and verifies a signed plugin ZIP. It
-publishes that ZIP to the [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29973-fish-shell) and checks its
-digest before attaching the same ZIP to the GitHub Release. It opens a PR for the next development version. The App key
-is held by the `release-auth` environment; Marketplace credentials and the certificate-chain variable are held by the
-tag-restricted `release` environment.
+The tag workflow checks the notes, sets `pluginVersion` for that build, then builds and verifies a signed plugin ZIP. A
+keyless job compares its ZIP members with the
+[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29973-fish-shell) version. If absent, a fresh job uploads
+the signed ZIP with the Marketplace token. Another keyless job checks the published members before GitHub attaches the
+original ZIP, verified by SHA256, to its Release. The workflow then opens a PR for the next development version. The App
+key is held by `release-auth`; signing and Marketplace credentials are held by the tag-restricted `release` environment.
