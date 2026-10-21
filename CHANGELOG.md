@@ -6,7 +6,11 @@ All notable changes to this project will be documented in this file.
 
 <!-- towncrier release notes start -->
 
+<a name="release-0-1-10"></a>
+
 ## [0.1.10] - 2026-08-03
+
+<a name="release-0-1-9"></a>
 
 ## [0.1.9] - 2026-07-29
 
@@ -17,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - Support IntelliJ Platform 2026.2 ([#108](https://github.com/tox-dev/jetbrains-fish/pull/108)) by
   [@gaborbernat](https://github.com/gaborbernat).
 
+<a name="release-0-1-8"></a>
+
 ## [0.1.8] - 2026-02-21
 
 <a name="release-0-1-8-fixed"></a>
@@ -26,15 +32,27 @@ All notable changes to this project will be documented in this file.
 - Parse escaped backslashes in single-quoted Fish strings ([#36](https://github.com/tox-dev/jetbrains-fish/pull/36)) by
   [@gaborbernat](https://github.com/gaborbernat).
 
+<a name="release-0-1-7"></a>
+
 ## [0.1.7] - 2026-01-29
+
+<a name="release-0-1-6"></a>
 
 ## [0.1.6] - 2026-01-29
 
+<a name="release-0-1-5"></a>
+
 ## [0.1.5] - 2026-01-29
+
+<a name="release-0-1-4"></a>
 
 ## [0.1.4] - 2026-01-29
 
+<a name="release-0-1-3"></a>
+
 ## [0.1.3] - 2026-01-29
+
+<a name="release-0-1-2"></a>
 
 ## [0.1.2] - 2026-01-29
 
@@ -53,6 +71,8 @@ All notable changes to this project will be documented in this file.
   [@gaborbernat](https://github.com/gaborbernat).
 - Restore Fish color previews and icons ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)) by
   [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-0-1-1"></a>
 
 ## [0.1.1] - 2026-01-29
 
@@ -75,6 +95,8 @@ All notable changes to this project will be documented in this file.
   deprecated history flags like `--search`).
 - Inspections for unused local variables.
 - Run configurations to execute Fish scripts directly from the IDE.
+
+<a name="release-0-1-0"></a>
 
 ## [0.1.0] - Initial Release
 
