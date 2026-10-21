@@ -26,9 +26,18 @@ major version, a `feature` fragment selects a minor version, and other categorie
 updates `CHANGELOG.md`; `prek` checks the result before the repository-scoped App pushes the release commit and
 `v`-prefixed tag. The dispatch does not ask for a version number.
 
-The tag workflow checks the notes, sets `pluginVersion` for that build, then builds and verifies a signed plugin ZIP. A
-keyless job compares its ZIP members with the
+The tag workflow checks the notes and builds an unsigned plugin ZIP without credentials. A fresh job signs the verified
+ZIP, and another keyless job compares its members with the
 [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29973-fish-shell) version. If absent, a fresh job uploads
-the signed ZIP with the Marketplace token. Another keyless job checks the published members before GitHub attaches the
-original ZIP, verified by SHA256, to its Release. The workflow then opens a PR for the next development version. The App
-key is held by `release-auth`; signing and Marketplace credentials are held by the tag-restricted `release` environment.
+the signed ZIP with the Marketplace token. After the upload is accepted, GitHub attaches the original signed ZIP,
+verified by SHA256, to its Release. Marketplace approval can follow later; run **Verify Marketplace release** with the
+tag after the version becomes public to compare the published ZIP members. The release workflow then opens a PR for the
+next development version. The App key is held by `release-auth`; signing and Marketplace credentials are held by the
+tag-restricted `release` environment.
+
+If GitHub publication fails after Marketplace accepts the ZIP, run **Finalize GitHub Release** on the original tag. Pass
+the source tag run ID and the artifact IDs for `marketplace-acceptance`, `plugin-distribution`, and `release-notes` from
+that run. The finalizer checks the accepted Marketplace update ID, source commit, signed ZIP SHA256, and exact artifact
+IDs before creating or resuming the GitHub Release. It does not upload to Marketplace. A full tag rerun cannot repeat a
+pending Marketplace upload; if the upload result has no acceptance receipt, reconcile it manually with JetBrains before
+continuing.
