@@ -8,56 +8,55 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.10] - 2026-08-03
 
-- Migrate LSP support to the `LspIntegrationProvider` API ([#113](https://github.com/tox-dev/jetbrains-fish/pull/113)).
-- Stop mocking the global `ApplicationManager` in LSP tests
-  ([#111](https://github.com/tox-dev/jetbrains-fish/pull/111)).
-
 ## [0.1.9] - 2026-07-29
 
-- Build against IntelliJ Platform 2026.2 ([#108](https://github.com/tox-dev/jetbrains-fish/pull/108)).
-- Refresh release automation, workflow security checks, and formatting tools.
+<a name="release-0-1-9-added"></a>
+
+### Added
+
+- Support IntelliJ Platform 2026.2 ([#108](https://github.com/tox-dev/jetbrains-fish/pull/108)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
 ## [0.1.8] - 2026-02-21
 
-- Bump version to `0.1.8-dev` by @gaborbernat in https://github.com/tox-dev/jetbrains-fish/pull/22
-- 👷 ci(ui-test): fix IDE startup timeout in CI by @gaborbernat in https://github.com/tox-dev/jetbrains-fish/pull/29
-- 🐛 fix(lexer): handle escaped backslashes in single-quoted strings by @gaborbernat in
-  https://github.com/tox-dev/jetbrains-fish/pull/36
-- @pre-commit-ci[bot] made their first contribution in https://github.com/tox-dev/jetbrains-fish/pull/32
+<a name="release-0-1-8-fixed"></a>
+
+### Fixed
+
+- Parse escaped backslashes in single-quoted Fish strings ([#36](https://github.com/tox-dev/jetbrains-fish/pull/36)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
 ## [0.1.7] - 2026-01-29
 
-- Bump version to `0.1.7-dev` by @github-actions[bot] in https://github.com/tox-dev/jetbrains-fish/pull/20
-- Use RELEASE_TOKEN for post-release PR to trigger workflows by @gaborbernat in
-  https://github.com/tox-dev/jetbrains-fish/pull/21
-
 ## [0.1.6] - 2026-01-29
-
-- Bump version to `0.1.6-dev` by @github-actions[bot] in https://github.com/tox-dev/jetbrains-fish/pull/18
-- Fix auto-merge workflow to use GITHUB_TOKEN by @gaborbernat in https://github.com/tox-dev/jetbrains-fish/pull/19
 
 ## [0.1.5] - 2026-01-29
 
-- Bump version to `0.1.5-dev` by @github-actions[bot] in https://github.com/tox-dev/jetbrains-fish/pull/15
-- Fix internal API usage, improve UI tests, add auto-merge by @gaborbernat in
-  https://github.com/tox-dev/jetbrains-fish/pull/17
-
 ## [0.1.4] - 2026-01-29
-
-- Fix CI bugs, improve workflows, and fix flaky UI tests by @gaborbernat in
-  https://github.com/tox-dev/jetbrains-fish/pull/14
 
 ## [0.1.3] - 2026-01-29
 
-- Include the commit hash in development builds and simplify the release workflow
-  ([#13](https://github.com/tox-dev/jetbrains-fish/pull/13)).
-
 ## [0.1.2] - 2026-01-29
 
-- Fix LSP4IJ compatibility and improve run configuration support
-  ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)).
+<a name="release-0-1-2-added"></a>
+
+### Added
+
+- Run a Fish file from the IDE toolbar or gutter icon ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-0-1-2-fixed"></a>
+
+### Fixed
+
+- Keep LSP support working in PyCharm 2025.3 ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+- Restore Fish color previews and icons ([#12](https://github.com/tox-dev/jetbrains-fish/pull/12)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
 ## [0.1.1] - 2026-01-29
+
+<a name="release-0-1-1-added"></a>
 
 ### Added
 
@@ -78,6 +77,8 @@ All notable changes to this project will be documented in this file.
 - Run configurations to execute Fish scripts directly from the IDE.
 
 ## [0.1.0] - Initial Release
+
+<a name="release-0-1-0-added"></a>
 
 ### Added
 
