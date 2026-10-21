@@ -80,7 +80,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          archives=(build/distributions/*-${TAG#v}-signed.zip)
+          archives=(build/distributions/*-"${TAG#v}"-signed.zip)
           test "${#archives[@]}" -eq 1
           test -f "${archives[0]}"
           unzip -tq "${archives[0]}" >/dev/null
@@ -92,7 +92,7 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          read -r digest _ < <(sha256sum build/distributions/*-${TAG#v}-signed.zip)
+          read -r digest _ < <(sha256sum build/distributions/*-"${TAG#v}"-signed.zip)
           echo "sha=$digest" >>"$GITHUB_OUTPUT"
       - name: 📤 Publish to JetBrains Marketplace
         env:
@@ -106,7 +106,7 @@ jobs:
           EXPECTED_SHA: ${{ steps.archive.outputs.sha }}
           TAG: ${{ github.ref_name }}
         run: |
-          archives=(build/distributions/*-${TAG#v}-signed.zip)
+          archives=(build/distributions/*-"${TAG#v}"-signed.zip)
           test "${#archives[@]}" -eq 1
           read -r digest _ < <(sha256sum "${archives[0]}")
           test "$digest" = "$EXPECTED_SHA"
@@ -205,7 +205,7 @@ jobs:
         run: |
           set -euo pipefail
           version="${TAG#v}"
-          IFS='.' read -r major minor patch <<< "$version"
+          IFS='.' read -r major minor patch <<<"$version"
           next_version="$major.$minor.$((patch + 1))-dev"
           branch="post-release-$TAG"
           app_user_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
