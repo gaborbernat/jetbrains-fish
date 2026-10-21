@@ -566,14 +566,14 @@ sha256 = "3db3191d2509830c75438e20956a47c2259867d18a4106064ed75088b968a0c6"
 
 [[packages]]
 name = "release-creator"
-version = "0.4.2.dev53+g977a18dda"
+version = "0.4.2.dev54+gdec1a747d"
 marker = "\"release\" in dependency_groups"
 
 [packages.vcs]
 type = "git"
 url = "https://github.com/tox-dev/release-creator"
-requested-revision = "977a18dda08d831cad32e0b72c53024ca69bf310"
-commit-id = "977a18dda08d831cad32e0b72c53024ca69bf310"
+requested-revision = "dec1a747db4f9718450861cd9f4357f579b6e176"
+commit-id = "dec1a747db4f9718450861cd9f4357f579b6e176"
 
 [[packages]]
 name = "tomli-w"
