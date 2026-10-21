@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
 <!-- towncrier release notes start -->
 
 ## [0.1.10] - 2026-08-03
