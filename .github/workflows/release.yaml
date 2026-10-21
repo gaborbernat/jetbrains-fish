@@ -24,7 +24,7 @@ jobs:
           uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
           uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
           echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
-      - uses: tox-dev/github-workflows/render-release-notes@5e11f2254a4dcb7102747d312ad7db48a2e9b0cb
+      - uses: tox-dev/github-workflows/render-release-notes@296388849cced16665b3e8b4397a22265418d3dc
         with:
           tag: ${{ github.ref_name }}
           changelog: CHANGELOG.md
@@ -107,7 +107,7 @@ jobs:
             gh api -X POST "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
               -f tag_name="$TAG" --jq .body >"$RUNNER_TEMP/generated-notes.md"
           fi
-      - uses: tox-dev/github-workflows/render-release-notes@5e11f2254a4dcb7102747d312ad7db48a2e9b0cb
+      - uses: tox-dev/github-workflows/render-release-notes@296388849cced16665b3e8b4397a22265418d3dc
         with:
           tag: ${{ github.ref_name }}
           changelog: CHANGELOG.md
