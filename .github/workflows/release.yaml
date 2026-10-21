@@ -38,6 +38,8 @@ jobs:
     runs-on: ubuntu-26.04
     permissions:
       contents: read
+    outputs:
+      archive_sha: ${{ steps.archive.outputs.sha }}
     environment:
       name: release
       url: https://plugins.jetbrains.com/plugin/29973-fish-shell
@@ -63,6 +65,35 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: sed -i "s/^pluginVersion=.*/pluginVersion=${TAG#v}/" gradle.properties
+      - name: Build signed plugin ZIP
+        env:
+          CERTIFICATE_CHAIN: ${{ vars.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+        run: ./gradlew signPlugin
+      - name: Verify plugin structure and signature
+        env:
+          CERTIFICATE_CHAIN: ${{ vars.CERTIFICATE_CHAIN }}
+        run: ./gradlew verifyPluginStructure verifyPluginSignature
+      - name: Check signed ZIP and plugin version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          archives=(build/distributions/*-${TAG#v}-signed.zip)
+          test "${#archives[@]}" -eq 1
+          test -f "${archives[0]}"
+          unzip -tq "${archives[0]}" >/dev/null
+          unzip -p "${archives[0]}" "*/lib/*-${TAG#v}.jar" >"$RUNNER_TEMP/plugin.jar"
+          unzip -p "$RUNNER_TEMP/plugin.jar" META-INF/plugin.xml >"$RUNNER_TEMP/plugin.xml"
+          grep -Fq "<version>${TAG#v}</version>" "$RUNNER_TEMP/plugin.xml"
+      - name: Record signed ZIP digest
+        id: archive
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          read -r digest _ < <(sha256sum build/distributions/*-${TAG#v}-signed.zip)
+          echo "sha=$digest" >>"$GITHUB_OUTPUT"
       - name: 📤 Publish to JetBrains Marketplace
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
@@ -70,10 +101,19 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
         run: ./gradlew publishPlugin
+      - name: Check published ZIP digest
+        env:
+          EXPECTED_SHA: ${{ steps.archive.outputs.sha }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          archives=(build/distributions/*-${TAG#v}-signed.zip)
+          test "${#archives[@]}" -eq 1
+          read -r digest _ < <(sha256sum "${archives[0]}")
+          test "$digest" = "$EXPECTED_SHA"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: plugin-distribution
-          path: build/distributions/*
+          path: build/distributions/*-signed.zip
           if-no-files-found: error
   github-release:
     needs: publish
@@ -120,11 +160,20 @@ jobs:
         with:
           name: plugin-distribution
           path: dist/
+      - name: Check downloaded plugin ZIP
+        env:
+          EXPECTED_SHA: ${{ needs.publish.outputs.archive_sha }}
+        run: |
+          archives=(dist/*-signed.zip)
+          test "${#archives[@]}" -eq 1
+          unzip -tq "${archives[0]}" >/dev/null
+          read -r digest _ < <(sha256sum "${archives[0]}")
+          test "$digest" = "$EXPECTED_SHA"
       - name: Publish GitHub Release with plugin ZIP
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" dist/* --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
+        run: gh release create "$TAG" dist/*-signed.zip --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
   post-release:
     name: 📝 Post-release version bump
     needs: github-release
