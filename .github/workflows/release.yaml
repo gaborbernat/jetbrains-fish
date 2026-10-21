@@ -4,6 +4,9 @@ on:
     tags: ["v*"]
 permissions:
   contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   notes:
     name: Verify tagged source
