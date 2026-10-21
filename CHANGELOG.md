@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+<!-- towncrier release notes start -->
 
 ## [0.1.10] - 2026-08-03
 
@@ -92,4 +92,3 @@ All notable changes to this project will be documented in this file.
 [0.1.7]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.6...v0.1.7
 [0.1.8]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.7...v0.1.8
 [0.1.9]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.8...v0.1.9
-[unreleased]: https://github.com/tox-dev/jetbrains-fish/compare/v0.1.10...HEAD
