@@ -27,10 +27,11 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        run: |
-          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
-          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
-          echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
+        uses: tox-dev/github-workflows/install-locked-tools@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
+        with:
+          venv: ${{ runner.temp }}/release-tools
+      - name: Add installed tools to PATH
+        run: echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
       - name: Verify tag and select previous release
         id: tag
         env:
@@ -82,15 +83,16 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        run: |
-          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
-          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
-          echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
+        uses: tox-dev/github-workflows/install-locked-tools@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
+        with:
+          venv: ${{ runner.temp }}/release-tools
+      - name: Add installed tools to PATH
+        run: echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: generated-notes
           path: ${{ runner.temp }}
-      - uses: tox-dev/github-workflows/render-release-notes@2b4ed19340a7ec97020f4fd0a403531845c49356
+      - uses: tox-dev/github-workflows/render-release-notes@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
         with:
           tag: ${{ github.ref_name }}
           changelog: CHANGELOG.md
@@ -188,7 +190,7 @@ jobs:
           name: unsigned-plugin
           path: dist
       - id: signed
-        uses: tox-dev/github-workflows/sign-jetbrains-plugin@2b4ed19340a7ec97020f4fd0a403531845c49356
+        uses: tox-dev/github-workflows/sign-jetbrains-plugin@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
         with:
           archive: dist/${{ needs.build-unsigned.outputs.archive_name }}
           sha256: ${{ needs.build-unsigned.outputs.archive_sha }}
@@ -237,10 +239,11 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        run: |
-          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
-          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
-          echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
+        uses: tox-dev/github-workflows/install-locked-tools@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
+        with:
+          venv: ${{ runner.temp }}/release-tools
+      - name: Add installed tools to PATH
+        run: echo "$RUNNER_TEMP/release-tools/bin" >>"$GITHUB_PATH"
       - name: Check signed ZIP digest
         env:
           EXPECTED_SHA: ${{ needs.build-signed.outputs.archive_sha }}
@@ -266,7 +269,7 @@ jobs:
         with:
           name: plugin-distribution
           path: dist
-      - uses: tox-dev/github-workflows/publish-jetbrains-marketplace@2b4ed19340a7ec97020f4fd0a403531845c49356
+      - uses: tox-dev/github-workflows/publish-jetbrains-marketplace@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
         with:
@@ -330,7 +333,7 @@ jobs:
           unzip -tq "${archives[0]}" >/dev/null
           read -r digest _ < <(sha256sum "${archives[0]}")
           test "$digest" = "$EXPECTED_SHA"
-      - uses: tox-dev/github-workflows/publish-github-release@2b4ed19340a7ec97020f4fd0a403531845c49356
+      - uses: tox-dev/github-workflows/publish-github-release@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -433,7 +436,7 @@ jobs:
         with:
           artifact-ids: ${{ needs.post-release-prepare.outputs.artifact-id }}
           path: ${{ runner.temp }}/post-release
-      - uses: tox-dev/github-workflows/publish-post-release-pr@2b4ed19340a7ec97020f4fd0a403531845c49356
+      - uses: tox-dev/github-workflows/publish-post-release-pr@24e7c78489b6e2adb7b8f881761a5c2dbfe03fee
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
         with:
