@@ -94,7 +94,7 @@ jobs:
           test -f "$RUNNER_TEMP/notes/release-notes.md"
           test ! -L "$RUNNER_TEMP/notes/release-notes.md"
           test "$(find "$RUNNER_TEMP/notes" -mindepth 1 -printf . | wc -c)" -eq 1
-      - uses: tox-dev/github-workflows/publish-github-release@a040f8eb1c335676f3f97db2010a1a39a3cea1ac
+      - uses: tox-dev/github-workflows/publish-github-release@33db207c963ad07b8d2bff4099143593fd4100b2
         env:
           GH_TOKEN: ${{ github.token }}
         with:
