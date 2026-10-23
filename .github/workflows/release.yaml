@@ -68,7 +68,7 @@ jobs:
           path: ${{ runner.temp }}/generated-notes.md
           if-no-files-found: error
   release-notes:
-    needs: contributors
+    needs: [contributors, notes]
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -96,6 +96,7 @@ jobs:
       - uses: tox-dev/github-workflows/render-release-notes@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
         with:
           tag: ${{ github.ref_name }}
+          previous: ${{ needs.notes.outputs.previous }}
           changelog: CHANGELOG.md
           artifact-url: https://plugins.jetbrains.com/plugin/29973-fish-shell
           artifact-label: JetBrains Marketplace
