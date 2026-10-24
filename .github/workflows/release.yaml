@@ -27,10 +27,22 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+        uses: tox-dev/github-workflows/install-locked-tools@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
-          groups: release-notes
+          groups: release-validate
           venv: ${{ runner.temp }}/release-tools
+      - uses: tox-dev/github-workflows/verify-frozen-hooks@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
+      - name: Check tagged source with prek
+        env:
+          UV_EXCLUDE_NEWER: 7 days
+          UV_NO_CONFIG: "1"
+          UV_NO_SOURCES: "1"
+        shell: bash
+        run: |
+          unset UV_CONFIG_FILE UV_INDEX UV_INDEX_URL UV_DEFAULT_INDEX
+          unset UV_EXTRA_INDEX_URL UV_FIND_LINKS UV_EXCLUDE_NEWER_PACKAGE
+          unset UV_INSECURE_HOST UV_SYSTEM_CERTS SSL_CERT_FILE SSL_CERT_DIR
+          prek run --all-files
       - name: Verify tagged source
         id: tag
         env:
@@ -41,7 +53,7 @@ jobs:
           git tag --list | release-creator tags "$TAG"
           echo "commit=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
       - id: previous
-        uses: tox-dev/github-workflows/select-previous-tag@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+        uses: tox-dev/github-workflows/select-previous-tag@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           tag: ${{ github.ref_name }}
   contributors:
@@ -85,7 +97,7 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+        uses: tox-dev/github-workflows/install-locked-tools@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           groups: release-notes
           venv: ${{ runner.temp }}/release-tools
@@ -93,7 +105,7 @@ jobs:
         with:
           name: generated-notes
           path: ${{ runner.temp }}
-      - uses: tox-dev/github-workflows/render-release-notes@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+      - uses: tox-dev/github-workflows/render-release-notes@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           tag: ${{ github.ref_name }}
           previous: ${{ needs.notes.outputs.previous }}
@@ -191,7 +203,7 @@ jobs:
           name: unsigned-plugin
           path: dist
       - id: signed
-        uses: tox-dev/github-workflows/sign-jetbrains-plugin@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+        uses: tox-dev/github-workflows/sign-jetbrains-plugin@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           archive: dist/${{ needs.build-unsigned.outputs.archive_name }}
           sha256: ${{ needs.build-unsigned.outputs.archive_sha }}
@@ -240,7 +252,7 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+        uses: tox-dev/github-workflows/install-locked-tools@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           groups: release-notes
           venv: ${{ runner.temp }}/release-tools
@@ -259,55 +271,36 @@ jobs:
   marketplace-publish:
     name: Upload to JetBrains Marketplace
     needs: [notes, build-signed, release-notes, marketplace-check]
-    if: needs.marketplace-check.outputs.publish == 'true' && github.run_attempt == 1
+    if: needs.marketplace-check.outputs.publish == 'true'
     runs-on: ubuntu-26.04
     permissions:
+      actions: read
       contents: read
+      deployments: read
     environment: release
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: plugin-distribution
+          artifact-ids: ${{ needs.build-signed.outputs.artifact-id }}
           path: dist
-      - uses: tox-dev/github-workflows/publish-jetbrains-marketplace@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
-        env:
-          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ needs.release-notes.outputs.artifact-id }}
+          path: ${{ runner.temp }}/marketplace-notes
+      - name: Publish signed ZIP
+        uses: tox-dev/github-workflows/publish-jetbrains-marketplace@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         with:
           archive: dist/${{ needs.build-signed.outputs.archive_name }}
           sha256: ${{ needs.build-signed.outputs.archive_sha }}
           plugin-id: "29973"
           channel: ""
-      - name: Record accepted Marketplace update
-        env:
-          TAG: ${{ github.ref_name }}
-          COMMIT: ${{ needs.notes.outputs.commit }}
-          ARCHIVE: ${{ needs.build-signed.outputs.archive_name }}
-          ARCHIVE_SHA: ${{ needs.build-signed.outputs.archive_sha }}
-          SIGNED_ARTIFACT_ID: ${{ needs.build-signed.outputs.artifact-id }}
-          NOTES_ARTIFACT_ID: ${{ needs.release-notes.outputs.artifact-id }}
-        run: |
-          set -euo pipefail
-          jq -e --argjson plugin 29973 --arg version "${TAG#v}" \
-            '(.id | type == "number") and (.id > 0) and (.id | floor == .) and
-             .pluginId == $plugin and .version == $version and
-             (.channel == null or .channel == "" or .channel == "Stable")' \
-            "$RUNNER_TEMP/marketplace-response.json" >/dev/null
-          jq -n --arg repository "$GITHUB_REPOSITORY" --arg tag "$TAG" --arg commit "$COMMIT" \
-            --arg archive "$ARCHIVE" --arg sha256 "$ARCHIVE_SHA" \
-            --argjson runId "$GITHUB_RUN_ID" --argjson signedArtifactId "$SIGNED_ARTIFACT_ID" \
-            --argjson notesArtifactId "$NOTES_ARTIFACT_ID" \
-            --slurpfile response "$RUNNER_TEMP/marketplace-response.json" \
-            '{schema: 1, repository: $repository, tag: $tag, commit: $commit, sourceRunId: $runId,
-              pluginId: 29973, updateId: $response[0].id, version: $response[0].version,
-              channel: $response[0].channel,
-              signedArtifactId: $signedArtifactId, signedArchive: $archive, sha256: $sha256,
-              notesArtifactId: $notesArtifactId}' >"$RUNNER_TEMP/marketplace-acceptance.json"
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: marketplace-acceptance-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/marketplace-acceptance.json
-          if-no-files-found: error
-          retention-days: 30
+          tag: ${{ github.ref_name }}
+          commit: ${{ needs.notes.outputs.commit }}
+          signed-artifact-id: ${{ needs.build-signed.outputs.artifact-id }}
+          notes-artifact-id: ${{ needs.release-notes.outputs.artifact-id }}
+          notes-file: ${{ runner.temp }}/marketplace-notes/release-notes.md
+          github-token: ${{ github.token }}
+          publish-token: ${{ secrets.PUBLISH_TOKEN }}
   github-release:
     needs: [notes, build-signed, release-notes, marketplace-check, marketplace-publish]
     if: always() && needs.notes.result == 'success' && needs.build-signed.result == 'success' && needs.release-notes.result == 'success' && needs.marketplace-check.result == 'success' && (needs.marketplace-publish.result == 'success' || (needs.marketplace-publish.result == 'skipped' && needs.marketplace-check.outputs.publish == 'false'))
@@ -333,7 +326,7 @@ jobs:
           unzip -tq "${archives[0]}" >/dev/null
           read -r digest _ < <(sha256sum "${archives[0]}")
           test "$digest" = "$EXPECTED_SHA"
-      - uses: tox-dev/github-workflows/publish-github-release@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+      - uses: tox-dev/github-workflows/publish-github-release@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -435,7 +428,7 @@ jobs:
         with:
           artifact-ids: ${{ needs.post-release-prepare.outputs.artifact-id }}
           path: ${{ runner.temp }}/post-release
-      - uses: tox-dev/github-workflows/publish-post-release-pr@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
+      - uses: tox-dev/github-workflows/publish-post-release-pr@55f51f9b5cc0b40f280155a95de2d4f0ecbf7be1 # v3.0.0
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
         with:
