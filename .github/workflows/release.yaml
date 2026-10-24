@@ -27,7 +27,7 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           groups: release-notes
           venv: ${{ runner.temp }}/release-tools
@@ -41,7 +41,7 @@ jobs:
           git tag --list | release-creator tags "$TAG"
           echo "commit=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
       - id: previous
-        uses: tox-dev/github-workflows/select-previous-tag@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+        uses: tox-dev/github-workflows/select-previous-tag@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           tag: ${{ github.ref_name }}
   contributors:
@@ -85,7 +85,7 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           groups: release-notes
           venv: ${{ runner.temp }}/release-tools
@@ -93,7 +93,7 @@ jobs:
         with:
           name: generated-notes
           path: ${{ runner.temp }}
-      - uses: tox-dev/github-workflows/render-release-notes@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+      - uses: tox-dev/github-workflows/render-release-notes@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           tag: ${{ github.ref_name }}
           previous: ${{ needs.notes.outputs.previous }}
@@ -191,7 +191,7 @@ jobs:
           name: unsigned-plugin
           path: dist
       - id: signed
-        uses: tox-dev/github-workflows/sign-jetbrains-plugin@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+        uses: tox-dev/github-workflows/sign-jetbrains-plugin@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           archive: dist/${{ needs.build-unsigned.outputs.archive_name }}
           sha256: ${{ needs.build-unsigned.outputs.archive_sha }}
@@ -240,7 +240,7 @@ jobs:
           python-version: "3.15"
           enable-cache: false
       - name: Install locked release tools
-        uses: tox-dev/github-workflows/install-locked-tools@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+        uses: tox-dev/github-workflows/install-locked-tools@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         with:
           groups: release-notes
           venv: ${{ runner.temp }}/release-tools
@@ -269,7 +269,7 @@ jobs:
         with:
           name: plugin-distribution
           path: dist
-      - uses: tox-dev/github-workflows/publish-jetbrains-marketplace@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+      - uses: tox-dev/github-workflows/publish-jetbrains-marketplace@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
         with:
@@ -333,7 +333,7 @@ jobs:
           unzip -tq "${archives[0]}" >/dev/null
           read -r digest _ < <(sha256sum "${archives[0]}")
           test "$digest" = "$EXPECTED_SHA"
-      - uses: tox-dev/github-workflows/publish-github-release@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+      - uses: tox-dev/github-workflows/publish-github-release@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -435,7 +435,7 @@ jobs:
         with:
           artifact-ids: ${{ needs.post-release-prepare.outputs.artifact-id }}
           path: ${{ runner.temp }}/post-release
-      - uses: tox-dev/github-workflows/publish-post-release-pr@1b7d58c3e744b505215e1cb11697a80737b0e94d # v1.0.1
+      - uses: tox-dev/github-workflows/publish-post-release-pr@e2d5e308194a31710039f3237b7157431c0e38b5 # v2.0.0
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
         with:
